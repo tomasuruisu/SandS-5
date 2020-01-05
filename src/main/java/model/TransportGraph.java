@@ -27,19 +27,22 @@ public class TransportGraph {
      * The method also adds the station with it's index to the map stationIndices
      */
     public void addVertex(Station vertex) {
-        // TODO
+        stationList.add(vertex);
+		stationIndices.put(vertex.getStationName(), stationList.indexOf(vertex));
     }
 
 
     /**
-     * Method to add an edge to a adjancencyList. The indexes of the vertices are used to define the edge.
+     * Method to add an edge to an adjancencyList. The indexes of the vertices are used to define the edge.
      * Method also increments the number of edges, that is number of Connections.
-     * The grap is bidirected, so edge(to, from) should also be added.
+     * The graph is bi-directed, so edge(to, from) should also be added.
      * @param from
      * @param to
      */
     private void addEdge(int from, int to) {
-        // TODO
+        adjacencyLists[from].add(to);
+		adjacencyLists[to].add(from);
+		numberOfConnections++;
     }
 
 
@@ -51,7 +54,12 @@ public class TransportGraph {
      * @param connection The edge as a connection between stations
      */
     public void addEdge(Connection connection) {
-        // TODO
+		Station from = connection.getFrom();
+		Station to = connection.getTo();
+		
+        connections[getIndexOfStationByName(from.getStationName())][getIndexOfStationByName(to.getStationName())] = connection;
+		connections[getIndexOfStationByName(to.getStationName())][getIndexOfStationByName(from.getStationName())] = connection;
+		addEdge(getIndexOfStationByName(from.getStationName()), getIndexOfStationByName(to.getStationName()));
     }
 
     public List<Integer> getAdjacentVertices(int index) {
@@ -121,7 +129,15 @@ public class TransportGraph {
          * @return
          */
         public Builder addLine(String[] lineDefinition) {
-            // TODO
+            Line line = new Line(lineDefinition[1], lineDefinition[0]);
+			System.out.println("adding line: " + line.toString());
+			Station station;
+			for (int i = 2; i < lineDefinition.length; i++) {
+				station = new Station(lineDefinition[i]);
+				line.addStation(station);
+			}
+			System.out.println("added stations to line: " + line.getStationsOnLine().toString());
+			lineList.add(line);
             return this;
         }
 
@@ -132,7 +148,14 @@ public class TransportGraph {
          * @return
          */
         public Builder buildStationSet() {
-            // TODO
+            for (Line line : lineList) {
+				for (Station station: line.getStationsOnLine()) {
+					if (!stationSet.contains(station)) {
+						stationSet.add(station);
+					}
+				}
+			}
+			System.out.println("added stations to station set: " + stationSet.toString());
             return this;
         }
 
@@ -141,7 +164,14 @@ public class TransportGraph {
          * @return
          */
         public Builder addLinesToStations() {
-            // TODO
+            for (Station station: stationSet) {
+				for (Line line: lineList) {
+					if (line.getStationsOnLine().contains(station)) {
+						station.addLine(line);
+						System.out.println("added line " + line.toString() + " to station " + station);
+					}
+				}
+			}
             return this;
         }
 
@@ -150,19 +180,31 @@ public class TransportGraph {
          * @return
          */
         public Builder buildConnections() {
-            // TODO
+			Connection connection;
+            for (Line line: lineList) {
+				for(int i = 0; i < line.getStationsOnLine().size() - 1; i++) {
+					connection = new Connection(line.getStationsOnLine().get(i), line.getStationsOnLine().get(i + 1));
+					connectionSet.add(connection);
+				}
+			}
+			System.out.println("created connections: " + connectionSet.toString());
             return this;
         }
 
         /**
          * Method that builds the graph.
-         * All stations of the stationSet are addes as vertices to the graph.
-         * All connections of the connectionSet are addes as edges to the graph.
+         * All stations of the stationSet are added as vertices to the graph.
+         * All connections of the connectionSet are added as edges to the graph.
          * @return
          */
         public TransportGraph build() {
             TransportGraph graph = new TransportGraph(stationSet.size());
-            // TODO
+            for(Station station: stationSet) {
+				graph.addVertex(station);
+			}
+			for(Connection connection: connectionSet) {
+				graph.addEdge(connection);
+			}
             return graph;
         }
 
