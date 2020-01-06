@@ -7,13 +7,14 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import model.Line;
 /**
  * Abstract class that contains methods and attributes shared by the DepthFirstPath en BreadthFirstPath classes
  */
 public abstract class AbstractPathSearch {
 
-    protected boolean[] marked;
-    protected int[] edgeTo;
+    protected boolean[] marked; // marked[v] = is there an s-v path
+    protected int[] edgeTo; // edgeTo[v] = previous edge on shortest s-v path
     protected int transfers = 0;
     protected List<Station> nodesVisited;
     protected List<Station> nodesInPath;
@@ -21,6 +22,7 @@ public abstract class AbstractPathSearch {
     protected TransportGraph graph;
     protected final int startIndex;
     protected final int endIndex;
+
 
 
     public AbstractPathSearch(TransportGraph graph, String start, String end) {
@@ -51,16 +53,43 @@ public abstract class AbstractPathSearch {
      * @param vertex The station (vertex) as an index
      */
     public void pathTo(int vertex) {
-        // TODO
+		verticesInPath = new LinkedList();
+		nodesInPath = new LinkedList();
+        for (int x = vertex; x != startIndex; x = edgeTo[x]) {
+            verticesInPath.push(x);
+		}
+        verticesInPath.push(startIndex);
+		for (int stationIndex: verticesInPath) {
+			Station station = graph.getStation(stationIndex);
+			nodesInPath.add(station);
+		}
+		// if you're going from one station to another then you won't transfer
+		if (nodesInPath.size() > 2) {
+			countTransfers();
+		}
     }
 
     /**
      * Method to count the number of transfers in a path of vertices.
      * Uses the line information of the connections between stations.
-     * If to consecutive connections are on different lines there was a transfer.
+     * If two consecutive connections are on different lines there was a transfer.
      */
     public void countTransfers() {
-        // TODO
+		boolean needTransfer = true;
+		// if the station that is 2 stations further does not have the same line as the current station then
+		// there will be a transfer at the next station
+		for (int i = 0; i < nodesInPath.size() - 2; i++) {
+			for (Line line: nodesInPath.get(i).getLines()) {
+				if (nodesInPath.get(i + 2).hasLine(line)) {
+					// station that is 2 stations further still has the same line so no need to transfer
+					needTransfer = false;
+				}
+			}
+			if (needTransfer) {
+				transfers++;
+			}
+			needTransfer = true;
+		}
     }
 
 
