@@ -1,11 +1,15 @@
 package controller;
 
+import graphalgorithms.BreadthFirstPath;
 import model.TransportGraph;
 import model.TransportGraph.Builder;
 
 public class TransportGraphLauncher {
 
 	public static void main(String[] args) {
+
+		System.out.println(" == ASSIGNMENT A == ");
+
 		String[] redLine = {"red", "metro", "A", "B", "C", "D"};
 		String[] blueLine = {"blue", "metro", "E", "B", "F", "G"};
 		String[] greenLine = {"green", "metro", "H", "I", "C", "G", "J"};
@@ -57,12 +61,41 @@ public class TransportGraphLauncher {
         dfpTest.printNodesInVisitedOrder();
         System.out.println();
 		*/
-		// Uncommented to test the BreadthFirstPath algorithm
-		/*
+
 		BreadthFirstPath bfsTest = new BreadthFirstPath(transportGraph, "E", "J");
         bfsTest.search();
         System.out.println(bfsTest);
         bfsTest.printNodesInVisitedOrder();
-		*/
+
+		System.out.println(" == ASSIGNMENT B == ");
+
+		String[] redLineB = {"red", "metro", "Haven", "Marken", "Steigerplein", "Centrum", "Meridiaan", "Dukdalf", "Oostvaarders"};
+		String[] blueLineB = {"blue", "metro", "Trojelaan", "Coltrane Cirkel", "Meridiaan", "Robijnpark", "Violetplantsoen"};
+		String[] purpleLineB = {"purple", "metro", "Grote Sluis", "Grootzeil", "Coltrane Cirkel", "Centrum", "Swingstraat"};
+		String[] greenLineB = {"green", "metro", "Ymeerdijk", "Trojelaan", "Steigerplein", "Swingstraat", "Bachgracht", "Nobelplein"};
+		String[] yellowLineB = {"yellow", "bus", "Grote Sluis", "Ymeerdijk", "Haven", "Nobelplein", "Violetplantsoen", "Oostvaarders", "Grote Sluis"};
+
+		builder = new Builder();
+		System.out.println("");
+		builder.addLine(redLineB);
+		builder.addLine(blueLineB);
+		builder.addLine(purpleLineB);
+		builder.addLine(greenLineB);
+		builder.addLine(yellowLineB);
+		System.out.println("");
+		builder.buildStationSet();
+		System.out.println("");
+		builder.addLinesToStations();
+		System.out.println("");
+		builder.buildConnections();
+		System.out.println("");
+		transportGraph = new TransportGraph(17);
+		transportGraph = builder.build();
+		System.out.println(transportGraph.toString());
+
+		bfsTest = new BreadthFirstPath(transportGraph, "Steigerplein", "Grote Sluis");
+        bfsTest.search();
+        System.out.println(bfsTest);
+        bfsTest.printNodesInVisitedOrder();
 	}
 }

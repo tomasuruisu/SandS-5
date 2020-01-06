@@ -75,10 +75,10 @@ public abstract class AbstractPathSearch {
      * If two consecutive connections are on different lines there was a transfer.
      */
     public void countTransfers() {
-		boolean needTransfer = true;
 		// if the station that is 2 stations further does not have the same line as the current station then
 		// there will be a transfer at the next station
 		for (int i = 0; i < nodesInPath.size() - 2; i++) {
+			boolean needTransfer = true;
 			for (Line line: nodesInPath.get(i).getLines()) {
 				if (nodesInPath.get(i + 2).hasLine(line)) {
 					// station that is 2 stations further still has the same line so no need to transfer
@@ -88,7 +88,6 @@ public abstract class AbstractPathSearch {
 			if (needTransfer) {
 				transfers++;
 			}
-			needTransfer = true;
 		}
     }
 
