@@ -45,7 +45,6 @@ public class TransportGraph {
 		numberOfConnections++;
     }
 
-
     /**
      * Method to add an edge in the form of a connection between stations.
      * The method also adds the edge as an edge of indices by calling addEdge(int from, int to).
@@ -54,13 +53,44 @@ public class TransportGraph {
      * @param connection The edge as a connection between stations
      */
     public void addEdge(Connection connection) {
+		// add connection
 		Station from = connection.getFrom();
 		Station to = connection.getTo();
-		
-        connections[getIndexOfStationByName(from.getStationName())][getIndexOfStationByName(to.getStationName())] = connection;
-		connections[getIndexOfStationByName(to.getStationName())][getIndexOfStationByName(from.getStationName())] = connection;
 		addEdge(getIndexOfStationByName(from.getStationName()), getIndexOfStationByName(to.getStationName()));
+        connections[getIndexOfStationByName(from.getStationName())][getIndexOfStationByName(to.getStationName())] = connection;
+
+		// reverse the connection and add it as well
+		Connection connectionReverse = new Connection(to, from);
+		from = connectionReverse.getFrom();
+		to = connectionReverse.getTo();
+		connections[getIndexOfStationByName(from.getStationName())][getIndexOfStationByName(to.getStationName())] = connectionReverse;
     }
+
+	/*
+	* The method gets the proper connection and sets the weight of that connection and the reverse connection
+	*/
+	public void addWeight(String[] line, double[] weight) {
+		int from;
+		int to;
+		for (int i = 0; i < weight.length; i++) {
+			from = getIndexOfStationByName(line[i + 2]);
+			to = getIndexOfStationByName(line[i + 3]);
+			connections[from][to].setWeight(weight[i]);
+			connections[to][from].setWeight(weight[i]);
+			System.out.println("Set weight on connection: " + connections[from][to] + " : " + connections[from][to].getWeight());
+			System.out.println("Set weight on connection: " + connections[to][from] + " : " + connections[to][from].getWeight());
+		}
+	}
+
+	public void addLocation(String[] line, int[] coordinates) {
+		for (int i = 0; i < coordinates.length / 2; i++) {
+			int x = coordinates[i + i], y = coordinates[(i + i) + 1];
+			Location location = new Location(x, y);
+			Station station = stationList.get(getIndexOfStationByName(line[i + 2]));
+			station.setLocation(location);
+			System.out.println("Set Station location: " + station.getStationName() + "(" + location.x + ", " + location.y + ")");
+		}
+	}
 
     public List<Integer> getAdjacentVertices(int index) {
         return adjacencyLists[index];

@@ -1,7 +1,6 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Line {
@@ -23,6 +22,10 @@ public class Line {
     public List<Station> getStationsOnLine() {
         return stationsOnLine;
     }
+
+	public String getName() {
+		return name;
+	}
 
     @Override
     public boolean equals(Object other) {
